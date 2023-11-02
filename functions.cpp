@@ -1,26 +1,6 @@
-#include <iostream>
+#include "BigReal.h"
 #include <bits/stdc++.h>
-using namespace std;
-class BigReal {
-     string real_number;
-     char sign ;
-     string fraction , integer ;
-    BigReal subtraction (BigReal &f , BigReal s);
-public:
-    BigReal();
-    BigReal (string k);
-    BigReal operator + (BigReal &l);
-    BigReal operator - (string k) ;
-    BigReal operator > (string o);
-    BigReal operator < (string W);
-    BigReal operator == (string N);
-    BigReal operator << (string j);
-    BigReal operator >> (string c);
-    BigReal operator = (string a);
-
-};
-
-BigReal BigReal :: operator + (BigReal &l) {
+BigReal BigReal :: operator+(BigReal &l) {
 //    char f_sign;
     BigReal res;
 
@@ -29,7 +9,7 @@ BigReal BigReal :: operator + (BigReal &l) {
         int carry = 0;
         res.sign = sign;
 
-        // fraction_________________________________________
+    // fraction_________________________________________
         if(this->fraction.size() < l.fraction.size())
         {
             res.fraction = l.fraction.substr(this->fraction.size() , l.fraction.size()-1);
@@ -62,7 +42,7 @@ BigReal BigReal :: operator + (BigReal &l) {
 
         reverse(res.fraction.begin(), res.fraction.end());
 
-        // Decimal________________________________________________
+    // Decimal________________________________________________
         if(this->integer.size() < l.integer.size())
         {
             reverse(integer.begin(), integer.end());
@@ -114,8 +94,4 @@ BigReal BigReal :: operator + (BigReal &l) {
         BigReal res = subtraction(*this , l);
     }
 
-}
-int main() {
-
-    return 0;
 }
