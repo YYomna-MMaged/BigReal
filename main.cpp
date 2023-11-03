@@ -5,9 +5,8 @@ class BigReal {
      string real_number;
      char sign='+' ;
      string fraction , integer;
-    BigReal subtraction (BigReal &f , BigReal s);
+     BigReal subtraction (BigReal &f , BigReal s);
 public:
-
     BigReal();
     BigReal (string k);
     BigReal operator + (BigReal &l);
@@ -16,7 +15,6 @@ public:
     bool operator < (BigReal& W);
     bool operator == (BigReal& N);
     BigReal operator << (string j);
-    BigReal operator >> (string c);
     BigReal operator = (string a);
 
 };
@@ -41,9 +39,9 @@ bool BigReal:: operator > (BigReal& o){
         }
 
     }
-    else {
+
         return false;
-    }
+
 }
 //------------------------------------------
 bool BigReal:: operator < (BigReal& W){
@@ -66,9 +64,9 @@ bool BigReal:: operator < (BigReal& W){
         }
 
     }
-    else {
+
         return false;
-    }
+
 }
 //------------------------------------------
 BigReal BigReal :: operator + (BigReal &l) {
@@ -164,7 +162,7 @@ BigReal BigReal :: operator + (BigReal &l) {
     else if(sign != l.sign){
         BigReal res = subtraction(*this , l);
     }
-
+    return res;
 }
 int main() {
 
