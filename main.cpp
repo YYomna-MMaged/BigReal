@@ -3,23 +3,74 @@
 using namespace std;
 class BigReal {
      string real_number;
-     char sign ;
-     string fraction , integer ;
+     char sign='+' ;
+     string fraction , integer;
     BigReal subtraction (BigReal &f , BigReal s);
 public:
+
     BigReal();
     BigReal (string k);
     BigReal operator + (BigReal &l);
     BigReal operator - (string k) ;
-    BigReal operator > (string o);
-    BigReal operator < (string W);
-    BigReal operator == (string N);
+    bool operator > (BigReal& o);
+    bool operator < (BigReal& W);
+    bool operator == (BigReal& N);
     BigReal operator << (string j);
     BigReal operator >> (string c);
     BigReal operator = (string a);
 
 };
+//------------------------------------------------
+bool BigReal:: operator > (BigReal& o){
+    if ( sign == '+' && o.sign == '-'){
+        return true;
+    }
+    if (((sign == '-' && o.sign=='-')&& integer.size()<o.integer.size())||((sign=='+'&& o.sign=='+')&& integer.size()>o.integer.size())){
+        return true;
+    }
 
+    else if (integer.size()==o.integer.size()){
+        if((integer> o.integer && o.sign=='+' )||(integer< o.integer && o.sign=='-')){
+            return true;
+        }
+
+        if(integer==o.integer) {
+            if((fraction > o.fraction && sign=='+' )||(fraction< o.fraction && o.sign=='-')){
+                return true;
+            }
+        }
+
+    }
+    else {
+        return false;
+    }
+}
+//------------------------------------------
+bool BigReal:: operator < (BigReal& W){
+    if ( sign == '-' && W.sign == '+'){
+        return true;
+    }
+    if (((sign =='-' && W.sign=='-')&& integer.size()>W.integer.size())||((sign=='+'&& W.sign=='+')&& integer.size()<W.integer.size())){
+        return true;
+    }
+
+    else if (integer.size()==W.integer.size()){
+        if((integer < W.integer && W.sign=='+' )||(integer > W.integer && W.sign=='-')){
+            return true;
+        }
+
+        if(integer==W.integer) {
+            if((fraction < W.fraction && sign =='+' )||(fraction > W.fraction && W.sign=='-')){
+                return true;
+            }
+        }
+
+    }
+    else {
+        return false;
+    }
+}
+//------------------------------------------
 BigReal BigReal :: operator + (BigReal &l) {
 //    char f_sign;
     BigReal res;
