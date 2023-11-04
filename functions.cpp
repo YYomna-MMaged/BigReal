@@ -577,3 +577,17 @@ BigReal BigReal ::addition(BigReal &f, BigReal s , bool big) {
 }
 
 
+BigReal& BigReal :: operator = (const BigReal& a) {
+
+    sign = a.sign;
+    integer = a.integer;
+    fraction = a.fraction;
+    return *this; // Return a reference to the modified object
+}
+
+BigReal :: BigReal (const BigReal& other){
+    this->fraction = other.fraction;
+    this->sign = other.sign;
+    this->integer = other.integer;
+}
+
