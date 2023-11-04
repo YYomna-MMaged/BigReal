@@ -22,7 +22,7 @@ public:
     bool operator > (BigReal& o);
     bool operator < (BigReal& W);
     bool operator == (BigReal& N);
-    friend ostream& operator << (ostream& out , BigReal j);
+    friend ostream &operator << (ostream &out, BigReal &big_real);
     BigReal operator >> (BigReal c);
     BigReal& operator = (const BigReal& a);
 
