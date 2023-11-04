@@ -577,7 +577,7 @@ BigReal BigReal ::addition(BigReal &f, BigReal s , bool big) {
 }
 
 
-BigReal& BigReal ::operator = (const BigReal& a) {
+BigReal& BigReal :: operator = (const BigReal& a) {
 
     sign = a.sign;
     integer = a.integer;
@@ -591,7 +591,7 @@ BigReal :: BigReal (const BigReal& other){
     this->integer = other.integer;
 }
 //----------------------------------
-BigReal ::BigReal(string k) {
+BigReal ::BigReal (string k) {
     int l=0;
     if(regex_match(k,regex("[+-]?\\d*.?\\d+"))){
         if(k[0]=='+'){
@@ -637,7 +637,7 @@ bool BigReal:: operator > (BigReal& o){
     return false;
 }
 //------------------------------------------
-bool BigReal:: operator < (BigReal& W){
+bool BigReal :: operator < (BigReal& W){
     if ( sign == '-' && W.sign == '+'){
         return true;
     }

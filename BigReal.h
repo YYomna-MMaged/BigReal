@@ -12,17 +12,19 @@ class BigReal {
     char sign ;
     string fraction , integer ;
     BigReal subtraction (BigReal &f , BigReal s);
+    BigReal addition (BigReal &f , BigReal s , bool this_is_bigger);
 public:
     BigReal();
     BigReal (string k);
-    BigReal operator + (BigReal &l );
-    BigReal operator - (string k) ;
-    BigReal operator > (string o);
-    BigReal operator < (string W);
-    BigReal operator == (string N);
-    BigReal operator << (string j);
-    BigReal operator >> (string c);
-    BigReal operator = (string a);
+    BigReal (const BigReal& other);
+    BigReal operator + (BigReal& l );
+    BigReal operator - (BigReal& k) ;
+    bool operator > (BigReal& o);
+    bool operator < (BigReal& W);
+    bool operator == (BigReal& N);
+    friend ostream& operator << (ostream& out , BigReal j);
+    BigReal operator >> (BigReal c);
+    BigReal& operator = (const BigReal& a);
 
 };
 
