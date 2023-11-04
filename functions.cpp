@@ -1,7 +1,8 @@
 #include "BigReal.h"
 #include <bits/stdc++.h>
+
+//_____________(+ operator)________________
 BigReal BigReal :: operator+(BigReal &l) {
-//    char f_sign;
     BigReal res;
 
     if(this->sign == l.sign) {
@@ -20,13 +21,9 @@ BigReal BigReal :: operator+(BigReal &l) {
         {
             res.fraction = this->fraction.substr(l.fraction.size() , this->fraction.size()-1);
             reverse(res.fraction.begin(), res.fraction.end());
-//            for (int i = 0; i < (this->fraction.size() - l.fraction.size()); ++i) {
-//                l.fraction.push_back('0');
-//            }
         }
-
         int common = min(fraction.size() , l.fraction.size());
-        for (int i = common-1; i <= 0; --i) {
+        for (int i = common-1; i >= 0; --i) {
             int x = (this->fraction[i] - '0') + (l.fraction[i] - '0') + carry;
 
             if(x > 9){
@@ -36,41 +33,19 @@ BigReal BigReal :: operator+(BigReal &l) {
             else{
                 carry = 0;
             }
-
             res.fraction.push_back(char('0' + x));
         }
-
         reverse(res.fraction.begin(), res.fraction.end());
 
     // Decimal________________________________________________
-        if(this->integer.size() < l.integer.size())
-        {
-            reverse(integer.begin(), integer.end());
-
-            int i2 = l.integer.size() - integer.size();
-            for (int i = 0; i < i2; ++i) {
-                this->integer.push_back('0');
-            }
-            reverse(integer.begin(), integer.end());
-//            res.integer = l.integer.substr(this->integer.size() , l.integer.size()-1);
-//            reverse(res.fraction.begin(), res.fraction.end());
+        while (this->integer.size() < l.integer.size()){
+            integer = '0' + l.integer;
         }
 
-        else if(this->integer.size() > l.integer.size())
-        {
-//            res.fraction = this->fraction.substr(l.fraction.size() , this->fraction.size()-1);
-//            reverse(res.fraction.begin(), res.fraction.end());
-            reverse(l.integer.begin(), l.integer.end());
-            int i1 = integer.size() - l.integer.size();
-
-            for (int i = 0; i < i1; ++i) {
-                l.fraction.push_back('0');
-            }
-            reverse(l.integer.begin(), l.integer.end());
+        while (l.integer.size() < this->integer.size()){
+            l.integer = '0' + l.integer;
         }
-
-//        int common = min(fraction.size() , l.fraction.size());
-        for (int i = integer.size()-1; i <= 0; --i) {
+        for (int i = integer.size()-1; i >= 0; --i) {
             int x = (this->integer[i] - '0') + (l.integer[i] - '0') + carry;
 
             if(x > 9){
@@ -80,24 +55,20 @@ BigReal BigReal :: operator+(BigReal &l) {
             else{
                 carry = 0;
             }
-
             res.integer.push_back(char('0' + x));
         }
-
         if(carry){
             res.integer.push_back(char('0' + carry));
         }
         reverse(res.integer.begin(), res.integer.end());
     }
-
     else if(sign != l.sign){
         BigReal res = subtraction(*this , l);
     }
-
     return res;
 
 }
-
+//_______________(subtraction)_________________________
 BigReal BigReal::subtraction(BigReal &f, BigReal s) {
     BigReal sub_res ;
     bool f_is_bigger = false;
@@ -110,7 +81,6 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
     else if(f.integer.size() < s.integer.size()){
         sub_res.sign = s.sign;
     }
-
     else{
         if(f.integer > s.integer){
             sub_res.sign = f.sign;
@@ -120,17 +90,14 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
         else if(f.integer < s.integer){
             sub_res.sign = s.sign;
         }
-
         else {
             if(f.fraction > s.fraction){
                 sub_res.sign = f.sign;
                 f_is_bigger = true;
             }
-
             else if(f.fraction < s.fraction){
                 sub_res.sign = s.sign;
             }
-
             else
             {
                 sub_res.fraction = '0';
@@ -144,6 +111,7 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
 
     if (f_is_bigger) {
 
+        // fraction_________________________________________
         while (f.fraction.size() < s.fraction.size()){
             f.fraction = f.fraction + '0';
         }
@@ -178,10 +146,9 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
                     x = ((f.fraction[i] - '0') + 9) - (s.fraction[i] - '0');
                 }
                 else{
-                    x = (f.fraction[i] - '0') - (s.fraction[i] - '0');
+                    x = 0;
                 }
             }
-
             sub_res.fraction.push_back(char('0' + x));
         }
         reverse(sub_res.fraction.begin(), sub_res.fraction.end());
@@ -211,16 +178,12 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
                     borrow = 1;
                 }
             }
-
             else if (f.integer[i] > s.integer[i])  {
                 if(borrow){
                     f.integer[i] = char(f.integer[i] - 1);
-                    x = (f.integer[i] - '0') - (s.integer[i] - '0');
-                    borrow = 0;
                 }
-                else{
-                    x = (f.integer[i] - '0') - (s.integer[i] - '0');
-                }
+                x = (f.integer[i] - '0') - (s.integer[i] - '0');
+                borrow = 0;
             }
             else {
                 if(borrow){
@@ -230,12 +193,9 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
                     x = 0;
                 }
             }
-
             sub_res.integer.push_back(char('0' + x));
         }
-
         reverse(sub_res.integer.begin(), sub_res.integer.end());
-
     }
 
     else if(!f_is_bigger) {
@@ -243,12 +203,12 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
         while (f.fraction.size() < s.fraction.size()){
             f.fraction = f.fraction + '0';
         }
-
         while (f.fraction.size() > s.fraction.size()){
             s.fraction = s.fraction + '0';
         }
 
         int borrow = 0;
+        // fraction_________________________________________
         for (int i = f.fraction.size() - 1; i >= 0; --i) {
             int x;
             if (f.fraction[i] < s.fraction[i]) {
@@ -263,25 +223,20 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
             else if (s.fraction[i] > f.fraction[i]){
                 if(borrow){
                     s.fraction[i] = char(s.fraction[i] - 1);
-                    x = (s.fraction[i] - '0') - (f.fraction[i] - '0');
-                    borrow = 0;
                 }
-                else{
-                    x = (s.fraction[i] - '0') - (f.fraction[i] - '0');
-                }
+                x = (s.fraction[i] - '0') - (f.fraction[i] - '0');
+                borrow = 0;
             }
             else {
                 if(borrow){
                     x = ((s.fraction[i] - '0') + 9) - (f.fraction[i] - '0');
                 }
                 else {
-                    x = (s.fraction[i] - '0') - (f.fraction[i] - '0');
+                    x = 0;
                 }
             }
-
             sub_res.fraction.push_back(char('0' + x));
         }
-
         reverse(sub_res.fraction.begin(), sub_res.fraction.end());
 
         // Decimal________________________________________________
@@ -297,7 +252,6 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
         while (s.integer.size() < f.integer.size()) {
             s.integer = '0' + s.integer;
         }
-
         for (int i = f.integer.size() - 1; i <= 0; --i) {
             int x;
             if (f.integer[i] < s.integer[i]) {
@@ -310,16 +264,12 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
                     borrow = 1;
                 }
             }
-
             else if (s.integer[i] > f.integer[i]) {
                 if(borrow){
                     s.integer[i] = char(s.integer[i] - 1);
-                    x = (s.integer[i] - '0') - (f.integer[i] - '0');
-                    borrow = 0;
                 }
-                else{
-                    x = (s.integer[i] - '0') - (f.integer[i] - '0');
-                }
+                x = (s.integer[i] - '0') - (f.integer[i] - '0');
+                borrow = 0;
             }
             else {
                 if(borrow){
@@ -330,57 +280,46 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
                     x = 0;
                 }
             }
-
-
             sub_res.integer.push_back(char('0' + x));
         }
-
         reverse(sub_res.integer.begin(), sub_res.integer.end());
-
     }
 
     return sub_res;
 }
-
+//_____________(- operator)________________
 BigReal BigReal :: operator - (BigReal &k) {
     BigReal res;
 
     bool is_big = false;
     if (integer.size() > k.integer.size()){
-        res.sign = sign;
         is_big = true;
     }
-    else if (integer.size() > k.integer.size()){
-        res.sign = (sign == '+') ? '-' : '+';
-    }
-    else{
+    else if (integer.size() == k.integer.size()){
+
         if(integer > k.integer){
-            res.sign = sign;
             is_big = true;
         }
-        else if (integer < k.integer) {
-            res.sign = (sign == '+') ? '-' : '+';
-        }
-        else {
+        else if (integer == k.integer) {
+
             if(fraction > k.fraction){
-                res.sign = sign;
                 is_big = true;
             }
-            else if (fraction < k.fraction) {
-                res.sign = (sign == '+') ? '-' : '+';
-            }
-            else {
+            else if (fraction == k.fraction) {
                 res.integer = '0';
                 res.fraction = '0';
                 res.sign = '+';
-                return res;
             }
         }
     }
 
-    if (sign == k.sign)
-    {
-//        res.sign = sign;
+    if (sign == k.sign){
+        if(is_big){
+            res.sign = sign;
+        }
+        else{
+            res.sign= (sign == '+') ? '-' : '+';
+        }
 
         if(is_big){
             while (fraction.size() < k.fraction.size()){
@@ -391,6 +330,7 @@ BigReal BigReal :: operator - (BigReal &k) {
             }
 
             int borrow = 0;
+            //fraction___________________________________________
             for (int i = fraction.size() - 1; i >= 0; --i) {
                 int x;
                 if (fraction[i] < k.fraction[i]) {
@@ -408,19 +348,15 @@ BigReal BigReal :: operator - (BigReal &k) {
                     }
                     x = (k.fraction[i] - '0') - (k.fraction[i] - '0');
                     borrow = 0;
-//                    else{
-//                        x = (fraction[i] - '0') - (k.fraction[i] - '0');
-//                    }
                 }
                 else {
                     if(borrow){
                         x = ((fraction[i] - '0') + 9) - (k.fraction[i] - '0');
                     }
                     else{
-                        x = (fraction[i] - '0') - (k.fraction[i] - '0');
+                        x = 0;
                     }
                 }
-
                 res.fraction.push_back(char('0' + x));
             }
             reverse(res.fraction.begin(), res.fraction.end());
@@ -457,9 +393,6 @@ BigReal BigReal :: operator - (BigReal &k) {
                     }
                     x = (integer[i] - '0') - (k.integer[i] - '0');
                     borrow = 0;
-//                    else{
-//                        x = (integer[i] - '0') - (k.integer[i] - '0');
-//                    }
                 }
                 else {
                     if(borrow){
@@ -476,8 +409,94 @@ BigReal BigReal :: operator - (BigReal &k) {
             reverse(res.integer.begin(), res.integer.end());
 
         }
-    }
 
+        if(!is_big){
+            while (k.fraction.size() < fraction.size()){
+                k.fraction = k.fraction + '0';
+            }
+            while (k.fraction.size() > fraction.size()) {
+                fraction = fraction + '0';
+            }
+
+            int borrow = 0;
+            //fraction___________________________________________
+            for (int i = fraction.size() - 1; i >= 0; --i) {
+                int x;
+                if (k.fraction[i] < fraction[i]) {
+                    if (borrow) {
+                        x = ((k.fraction[i] - '0') + 9) - (fraction[i] - '0');
+                    }
+                    else {
+                        x = ((k.fraction[i] - '0') + 10) - (fraction[i] - '0');
+                        borrow = 1;
+                    }
+                }
+                else if (k.fraction[i] > fraction[i]) {
+                    if(borrow) {
+                        k.fraction[i] = char(k.fraction[i] - 1);
+                    }
+                    x = (k.fraction[i] - '0') - (fraction[i] - '0');
+                    borrow = 0;
+                }
+                else {
+                    if(borrow){
+                        x = ((k.fraction[i] - '0') + 9) - (fraction[i] - '0');
+                    }
+                    else{
+                        x = 0;
+                    }
+                }
+
+                res.fraction.push_back(char('0' + x));
+            }
+            reverse(res.fraction.begin(), res.fraction.end());
+
+            // Decimal________________________________________________
+            if(borrow){
+                int z = k.integer.size()-1;
+                k.integer[z] = char(k.integer[z] - 1);
+                borrow = 0;
+            }
+            while (k.integer.size() < integer.size()){
+                k.integer = '0' + k.integer;
+            }
+            while (k.integer.size() > integer.size()){
+                integer = '0' + integer;
+            }
+
+            for (int i = k.integer.size() - 1; i >= 0; --i) {
+                int x;
+                if (k.integer[i] < integer[i]) {
+                    if (borrow) {
+                        x = ((k.integer[i] - '0') + 9) - (integer[i] - '0');
+                    }
+
+                    else {
+                        x = ((k.integer[i] - '0') + 10) - (integer[i] - '0');
+                        borrow = 1;
+                    }
+                }
+
+                else if (k.integer[i] > integer[i])  {
+                    if(borrow) {
+                        k.integer[i] = char(k.integer[i] - 1);
+                    }
+                    x = (k.integer[i] - '0') - (integer[i] - '0');
+                    borrow = 0;
+                }
+                else {
+                    if(borrow){
+                        x = ((k.integer[i] - '0') + 9) - (integer[i] - '0');
+                    }
+                    else{
+                        x = 0;
+                    }
+                }
+                res.integer.push_back(char('0' + x));
+            }
+            reverse(res.integer.begin(), res.integer.end());
+        }
+    }
 
     else if (sign != k.sign)
     {
@@ -487,10 +506,11 @@ BigReal BigReal :: operator - (BigReal &k) {
     return res;
 }
 
-BigReal BigReal ::addition(BigReal &f, BigReal s , bool big) {
+//_________________(addition)_________________________
+BigReal BigReal :: addition(BigReal &f, BigReal s , bool big) {
     BigReal res_add;
 
-    res_add.sign = (big) ? f.sign : s.sign;
+    res_add.sign = f.sign;
 
     int carry = 0;
     // fraction_________________________________________
@@ -504,13 +524,10 @@ BigReal BigReal ::addition(BigReal &f, BigReal s , bool big) {
     {
         res_add.fraction = this->fraction.substr(s.fraction.size() , f.fraction.size()-1);
         reverse(res_add.fraction.begin(), res_add.fraction.end());
-//            for (int i = 0; i < (this->fraction.size() - l.fraction.size()); ++i) {
-//                l.fraction.push_back('0');
-//            }
     }
 
     int common = min(f.fraction.size() , s.fraction.size());
-    for (int i = common-1; i <= 0; --i) {
+    for (int i = common-1; i >= 0; --i) {
         int x = (f.fraction[i] - '0') + (s.fraction[i] - '0') + carry;
 
         if(x > 9){
@@ -527,33 +544,16 @@ BigReal BigReal ::addition(BigReal &f, BigReal s , bool big) {
     reverse(res_add.fraction.begin(), res_add.fraction.end());
 
     // Decimal________________________________________________
-    if(f.integer.size() < s.integer.size())
+    while(f.integer.size() < s.integer.size())
     {
-        reverse(f.integer.begin(), f.integer.end());
-
-        int i2 = s.integer.size() - f.integer.size();
-        for (int i = 0; i < i2; ++i) {
-            f.integer.push_back('0');
-        }
-        reverse(f.integer.begin(), f.integer.end());
-//            res.integer = l.integer.substr(this->integer.size() , l.integer.size()-1);
-//            reverse(res.fraction.begin(), res.fraction.end());
+        f.integer = '0' + s.integer;
     }
 
-    else if(f.integer.size() > s.integer.size())
+    while (f.integer.size() > s.integer.size())
     {
-//            res.fraction = this->fraction.substr(l.fraction.size() , this->fraction.size()-1);
-//            reverse(res.fraction.begin(), res.fraction.end());
-        reverse(s.integer.begin(), s.integer.end());
-        int i1 = f.integer.size() - s.integer.size();
-
-        for (int i = 0; i < i1; ++i) {
-            s.fraction.push_back('0');
-        }
-        reverse(s.integer.begin(), s.integer.end());
+        s.integer = '0' + s.integer;
     }
 
-//        int common = min(fraction.size() , l.fraction.size());
     for (int i = f.integer.size()-1; i >= 0; --i) {
         int x = (f.integer[i] - '0') + (s.integer[i] - '0') + carry;
 
@@ -576,7 +576,7 @@ BigReal BigReal ::addition(BigReal &f, BigReal s , bool big) {
     return res_add;
 }
 
-
+//_____________(Assignment operator)________________
 BigReal& BigReal :: operator = (const BigReal& a) {
 
     sign = a.sign;
@@ -584,14 +584,14 @@ BigReal& BigReal :: operator = (const BigReal& a) {
     fraction = a.fraction;
     return *this; // Return a reference to the modified object
 }
-
+//_________________(copy constructor)________________
 BigReal :: BigReal (const BigReal& other){
     this->fraction = other.fraction;
     this->sign = other.sign;
     this->integer = other.integer;
 }
 //----------------------------------
-BigReal ::BigReal (string k) {
+BigReal :: BigReal (string k) {
     int l=0;
     if(regex_match(k,regex("[+-]?\\d*.?\\d+"))){
         if(k[0]=='+'){
@@ -657,7 +657,6 @@ bool BigReal :: operator < (BigReal& W){
         }
 
     }
-
     return false;
 
 }
@@ -671,7 +670,7 @@ bool BigReal:: operator == (BigReal& N){
 
 }
 //-------------------------------------------
-ostream &operator << (ostream &out,BigReal &big_real){
-    out << big_real.sign<<big_real.integer<<'.'<<big_real.fraction;
+ostream &operator << (ostream &out, const BigReal &big_real){
+    out << big_real.sign<<big_real.integer <<'.'<<big_real.fraction;
     return out;
 }
