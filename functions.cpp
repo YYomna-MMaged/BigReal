@@ -577,7 +577,7 @@ BigReal BigReal ::addition(BigReal &f, BigReal s , bool big) {
 }
 
 
-BigReal& BigReal :: operator = (const BigReal& a) {
+BigReal& BigReal ::operator = (const BigReal& a) {
 
     sign = a.sign;
     integer = a.integer;
@@ -590,4 +590,88 @@ BigReal :: BigReal (const BigReal& other){
     this->sign = other.sign;
     this->integer = other.integer;
 }
+//----------------------------------
+BigReal ::BigReal(string k) {
+    int l=0;
+    if(regex_match(k,regex("[+-]?\\d*.?\\d+"))){
+        if(k[0]=='+'){
+            sign='+';
+            l=1;
+        }
+        else if(k[0]=='-') {
+            sign='-';
+            l=1;
+        }
+        integer=k.substr(l,k.find('.'));
+        fraction=k.substr(integer.size()+1,k.size()-1);
+    }
+    if(integer==""){
+        integer="0";
+    }
+    if(fraction==""){
+        fraction="0";
+    }
+}
+//-------------------------------------
+bool BigReal:: operator > (BigReal& o){
+    if ( sign == '+' && o.sign == '-'){
+        return true;
+    }
+    if (((sign == '-' && o.sign=='-')&& integer.size()<o.integer.size())||((sign=='+'&& o.sign=='+')&& integer.size()>o.integer.size())){
+        return true;
+    }
 
+    else if (integer.size()==o.integer.size()){
+        if((integer> o.integer && o.sign=='+' )||(integer< o.integer && o.sign=='-')){
+            return true;
+        }
+
+        if(integer==o.integer) {
+            if((fraction > o.fraction && sign=='+' )||(fraction< o.fraction && o.sign=='-')){
+                return true;
+            }
+        }
+
+    }
+
+    return false;
+}
+//------------------------------------------
+bool BigReal:: operator < (BigReal& W){
+    if ( sign == '-' && W.sign == '+'){
+        return true;
+    }
+    if (((sign =='-' && W.sign=='-')&& integer.size()>W.integer.size())||((sign=='+'&& W.sign=='+')&& integer.size()<W.integer.size())){
+        return true;
+    }
+
+    else if (integer.size()==W.integer.size()){
+        if((integer < W.integer && W.sign=='+' )||(integer > W.integer && W.sign=='-')){
+            return true;
+        }
+
+        if(integer==W.integer) {
+            if((fraction < W.fraction && sign =='+' )||(fraction > W.fraction && W.sign=='-')){
+                return true;
+            }
+        }
+
+    }
+
+    return false;
+
+}
+
+//--------------------------------------------
+bool BigReal:: operator == (BigReal& N){
+    if(sign == N.sign && integer == N.integer && fraction == N.fraction){
+        return true ;
+    }
+    return false;
+
+}
+//-------------------------------------------
+ostream &operator << (ostream &out,BigReal &big_real){
+    out << big_real.sign<<big_real.integer<<'.'<<big_real.fraction;
+    return out;
+}
