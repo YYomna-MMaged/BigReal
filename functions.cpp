@@ -5,25 +5,25 @@
 BigReal BigReal :: operator+(BigReal &l) {
     BigReal res;
 
-    if(this->sign == l.sign) {
+    if(this->sign == l.sign) { // if their signs are equal
 
         int carry = 0;
-        res.sign = sign;
+        res.sign = sign; //set sign
 
     // fraction_________________________________________
-        if(this->fraction.size() < l.fraction.size())
-        {
+        //Deducting the largest part and adding it to the result
+        if(this->fraction.size() < l.fraction.size()) {
             res.fraction = l.fraction.substr(this->fraction.size() , l.fraction.size()-1);
             reverse(res.fraction.begin(), res.fraction.end());
         }
 
-        else if(this->fraction.size() > l.fraction.size())
-        {
+        else if(this->fraction.size() > l.fraction.size()) {
             res.fraction = this->fraction.substr(l.fraction.size() , this->fraction.size()-1);
             reverse(res.fraction.begin(), res.fraction.end());
         }
-        int common = min(fraction.size() , l.fraction.size());
-        for (int i = common-1; i >= 0; --i) {
+
+        int common = min(fraction.size() , l.fraction.size()); // take the common length
+        for (int i = common-1; i >= 0; --i) { // add fraction part and take care about carry
             int x = (this->fraction[i] - '0') + (l.fraction[i] - '0') + carry;
 
             if(x > 9){
@@ -37,7 +37,8 @@ BigReal BigReal :: operator+(BigReal &l) {
         }
         reverse(res.fraction.begin(), res.fraction.end());
 
-    // Decimal________________________________________________
+        //Integer________________________________________________
+        //Make them the same length
         while (this->integer.size() < l.integer.size()){
             integer = '0' + l.integer;
         }
@@ -45,7 +46,7 @@ BigReal BigReal :: operator+(BigReal &l) {
         while (l.integer.size() < this->integer.size()){
             l.integer = '0' + l.integer;
         }
-        for (int i = integer.size()-1; i >= 0; --i) {
+        for (int i = integer.size()-1; i >= 0; --i) { // add integer part and take care about carry
             int x = (this->integer[i] - '0') + (l.integer[i] - '0') + carry;
 
             if(x > 9){
@@ -62,7 +63,7 @@ BigReal BigReal :: operator+(BigReal &l) {
         }
         reverse(res.integer.begin(), res.integer.end());
     }
-    else if(sign != l.sign){
+    else if(sign != l.sign){ // if their signs are not equal
         BigReal res = subtraction(*this , l);
     }
     return res;
@@ -72,7 +73,7 @@ BigReal BigReal :: operator+(BigReal &l) {
 BigReal BigReal::subtraction(BigReal &f, BigReal s) {
     BigReal sub_res ;
     bool f_is_bigger = false;
-
+    //Determine the largest number among them and set sign
     if(f.integer.size() > s.integer.size()){
         sub_res.sign = f.sign;
         f_is_bigger = true;
@@ -108,19 +109,27 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
             }
         }
     }
+    //Make them the same length
+    while (f.fraction.size() < s.fraction.size()){
+        f.fraction = f.fraction + '0';
+    }
+    while (f.fraction.size() > s.fraction.size()) {
+        s.fraction = s.fraction + '0';
+    }
+    while (f.integer.size() < s.integer.size()){
+        f.integer = '0' + f.integer;
+    }
+    while (f.integer.size() > s.integer.size()){
+        s.integer = '0' + s.integer;
+    }
 
-    if (f_is_bigger) {
+
+    if (f_is_bigger) { //If the largest in the first number
 
         // fraction_________________________________________
-        while (f.fraction.size() < s.fraction.size()){
-            f.fraction = f.fraction + '0';
-        }
-        while (f.fraction.size() > s.fraction.size()) {
-            s.fraction = s.fraction + '0';
-        }
 
         int borrow = 0;
-        for (int i = f.fraction.size() - 1; i >= 0; --i) {
+        for (int i = f.fraction.size() - 1; i >= 0; --i) {// subtract fraction part and take care about borrow
             int x;
             if (f.fraction[i] < s.fraction[i]) {
                 if (borrow) {
@@ -153,20 +162,14 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
         }
         reverse(sub_res.fraction.begin(), sub_res.fraction.end());
 
-        // Decimal________________________________________________
+        //Integer________________________________________________
         if(borrow){
             int z = f.integer.size()-1;
             f.integer[z] = char(f.integer[z] - 1);
             borrow = 0;
         }
-        while (f.integer.size() < s.integer.size()){
-            f.integer = '0' + f.integer;
-        }
-        while (f.integer.size() > s.integer.size()){
-            s.integer = '0' + s.integer;
-        }
 
-        for (int i = f.integer.size() - 1; i >= 0; --i) {
+        for (int i = f.integer.size() - 1; i >= 0; --i) { // subtract integer part and take care about borrow
             int x;
             if (f.integer[i] < s.integer[i]) {
                 if (borrow) {
@@ -198,18 +201,11 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
         reverse(sub_res.integer.begin(), sub_res.integer.end());
     }
 
-    else if(!f_is_bigger) {
-
-        while (f.fraction.size() < s.fraction.size()){
-            f.fraction = f.fraction + '0';
-        }
-        while (f.fraction.size() > s.fraction.size()){
-            s.fraction = s.fraction + '0';
-        }
+    else if(!f_is_bigger) { //If the largest isn't the first number
 
         int borrow = 0;
         // fraction_________________________________________
-        for (int i = f.fraction.size() - 1; i >= 0; --i) {
+        for (int i = f.fraction.size() - 1; i >= 0; --i) { // subtract fraction part and take care about borrow
             int x;
             if (f.fraction[i] < s.fraction[i]) {
                 if (borrow) {
@@ -239,20 +235,14 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
         }
         reverse(sub_res.fraction.begin(), sub_res.fraction.end());
 
-        // Decimal________________________________________________
+        //Integer________________________________________________
         if(borrow){
             int z = s.integer.size()-1;
             s.integer[z] = char(s.integer[z] - 1);
             borrow = 0;
         }
-        while (f.integer.size() < s.integer.size()) {
-            f.integer = '0' + f.integer;
-        }
 
-        while (s.integer.size() < f.integer.size()) {
-            s.integer = '0' + s.integer;
-        }
-        for (int i = f.integer.size() - 1; i <= 0; --i) {
+        for (int i = f.integer.size() - 1; i >= 0; --i) { // subtract integer part and take care about borrow
             int x;
             if (f.integer[i] < s.integer[i]) {
                 if (borrow) {
@@ -291,6 +281,7 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
 BigReal BigReal :: operator - (BigReal &k) {
     BigReal res;
 
+    //Determine the largest number among them
     bool is_big = false;
     if (integer.size() > k.integer.size()){
         is_big = true;
@@ -305,33 +296,38 @@ BigReal BigReal :: operator - (BigReal &k) {
             if(fraction > k.fraction){
                 is_big = true;
             }
-            else if (fraction == k.fraction) {
+            else if (fraction == k.fraction && sign != k.sign) { //If two numbers are the same was the same sign then the result will be zero
                 res.integer = '0';
                 res.fraction = '0';
                 res.sign = '+';
+
+                return res;
             }
         }
     }
 
-    if (sign == k.sign){
-        if(is_big){
-            res.sign = sign;
+    if (sign == k.sign){ //If they have the same sign
+
+        while (fraction.size() < k.fraction.size()){
+            fraction = fraction + '0';
         }
-        else{
-            res.sign= (sign == '+') ? '-' : '+';
+        while (fraction.size() > k.fraction.size()) {
+            k.fraction = k.fraction + '0';
+        }
+
+        while (integer.size() < k.integer.size()){
+            integer = '0' + integer;
+        }
+        while (integer.size() > k.integer.size()){
+            k.integer = '0' + k.integer;
         }
 
         if(is_big){
-            while (fraction.size() < k.fraction.size()){
-                fraction = fraction + '0';
-            }
-            while (fraction.size() > k.fraction.size()) {
-                k.fraction = k.fraction + '0';
-            }
+            res.sign = sign; //the sign will take the sign of the first
 
             int borrow = 0;
             //fraction___________________________________________
-            for (int i = fraction.size() - 1; i >= 0; --i) {
+            for (int i = fraction.size() - 1; i >= 0; --i) { //subtract fractions and take care of borrow
                 int x;
                 if (fraction[i] < k.fraction[i]) {
                     if (borrow) {
@@ -361,20 +357,14 @@ BigReal BigReal :: operator - (BigReal &k) {
             }
             reverse(res.fraction.begin(), res.fraction.end());
 
-            // Decimal________________________________________________
+            //Integer________________________________________________
             if(borrow){
                 int z = integer.size()-1;
                 integer[z] = char(integer[z] - 1);
                 borrow = 0;
             }
-            while (integer.size() < k.integer.size()){
-                integer = '0' + integer;
-            }
-            while (integer.size() > k.integer.size()){
-                k.integer = '0' + k.integer;
-            }
 
-            for (int i = integer.size() - 1; i >= 0; --i) {
+            for (int i = integer.size() - 1; i >= 0; --i) { //subtract integers and take care of borrow
                 int x;
                 if (integer[i] < k.integer[i]) {
                     if (borrow) {
@@ -410,17 +400,13 @@ BigReal BigReal :: operator - (BigReal &k) {
 
         }
 
-        if(!is_big){
-            while (k.fraction.size() < fraction.size()){
-                k.fraction = k.fraction + '0';
-            }
-            while (k.fraction.size() > fraction.size()) {
-                fraction = fraction + '0';
-            }
+        if(!is_big){ //If the largest isn't the first number
+
+            res.sign= (sign == '+') ? '-' : '+'; //the sign will reverse the sign of the first number
 
             int borrow = 0;
             //fraction___________________________________________
-            for (int i = fraction.size() - 1; i >= 0; --i) {
+            for (int i = fraction.size() - 1; i >= 0; --i) { //subtract the smaller from the larger fraction
                 int x;
                 if (k.fraction[i] < fraction[i]) {
                     if (borrow) {
@@ -451,20 +437,14 @@ BigReal BigReal :: operator - (BigReal &k) {
             }
             reverse(res.fraction.begin(), res.fraction.end());
 
-            // Decimal________________________________________________
+            //Integer________________________________________________
             if(borrow){
                 int z = k.integer.size()-1;
                 k.integer[z] = char(k.integer[z] - 1);
                 borrow = 0;
             }
-            while (k.integer.size() < integer.size()){
-                k.integer = '0' + k.integer;
-            }
-            while (k.integer.size() > integer.size()){
-                integer = '0' + integer;
-            }
 
-            for (int i = k.integer.size() - 1; i >= 0; --i) {
+            for (int i = k.integer.size() - 1; i >= 0; --i) { //subtract the smaller from the larger integer
                 int x;
                 if (k.integer[i] < integer[i]) {
                     if (borrow) {
@@ -498,9 +478,8 @@ BigReal BigReal :: operator - (BigReal &k) {
         }
     }
 
-    else if (sign != k.sign)
-    {
-        res = addition(*this , k , is_big);
+    else if (sign != k.sign) { //If they haven't the same sign and different values
+        res = addition(*this , k , is_big); // Call the addition function
     }
 
     return res;
@@ -510,8 +489,8 @@ BigReal BigReal :: operator - (BigReal &k) {
 BigReal BigReal :: addition(BigReal &f, BigReal s , bool big) {
     BigReal res_add;
 
-    res_add.sign = f.sign;
-
+    res_add.sign = f.sign; //sige take the sign of the first number
+//__________ the add fractions and integers similar to the (+) operator-----------------------
     int carry = 0;
     // fraction_________________________________________
     if(f.fraction.size() < s.fraction.size())
@@ -543,7 +522,7 @@ BigReal BigReal :: addition(BigReal &f, BigReal s , bool big) {
 
     reverse(res_add.fraction.begin(), res_add.fraction.end());
 
-    // Decimal________________________________________________
+    //Integer________________________________________________
     while(f.integer.size() < s.integer.size())
     {
         f.integer = '0' + s.integer;
@@ -577,7 +556,7 @@ BigReal BigReal :: addition(BigReal &f, BigReal s , bool big) {
 }
 
 //_____________(Assignment operator)________________
-BigReal& BigReal :: operator = (const BigReal& a) {
+BigReal& BigReal :: operator = (const BigReal& a) { // Assignment the valuse of the object in another object
 
     sign = a.sign;
     integer = a.integer;
@@ -585,15 +564,15 @@ BigReal& BigReal :: operator = (const BigReal& a) {
     return *this; // Return a reference to the modified object
 }
 //_________________(copy constructor)________________
-BigReal :: BigReal (const BigReal& other){
+BigReal :: BigReal (const BigReal& other){ // Copy the valuse of the object in another object
     this->fraction = other.fraction;
     this->sign = other.sign;
     this->integer = other.integer;
 }
 //----------------------------------
 BigReal :: BigReal (string k) {
-    int l=0;
-    if(regex_match(k,regex("[+-]?\\d*.?\\d+"))){
+    int l = 0 , zero = 0;
+    if(regex_match(k,regex("[+-]?\\d*.?\\d+"))){ //Assignment the valuse of the object in another object
         if(k[0]=='+'){
             sign='+';
             l=1;
@@ -602,9 +581,13 @@ BigReal :: BigReal (string k) {
             sign='-';
             l=1;
         }
+        else {
+            sign = '+';
+        }
         integer=k.substr(l,k.find('.'));
         fraction=k.substr(integer.size()+1,k.size()-1);
     }
+    //If it not valid make it =0,0
     if(integer==""){
         integer="0";
     }
@@ -618,39 +601,37 @@ BigReal :: BigReal (string k) {
         integer = integer.substr(zero, integer.size());
     }
 }
-/----------------------------------
+//----------------------------------
 BigReal :: BigReal (double num) {
     string copy_num = to_string(num);
-}
-    int l=0;
-    if(regex_match(copy_num,regex("[+-]?\\d*.?\\d+"))){
-        if(copy_num[0]=='+'){
-            sign='+';
-            l=1;
+
+    int l = 0, zero = 0;
+    if (regex_match(copy_num, regex("[+-]?\\d*.?\\d+"))) {
+        if (copy_num[0] == '+') {
+            sign = '+';
+            l = 1;
+        } else if (copy_num[0] == '-') {
+            sign = '-';
+            l = 1;
         }
-        else if(copy_num[0]=='-') {
-            sign='-';
-            l=1;
+        else {
+            sign = '+';
         }
-        integer = copy_num.substr(l,copy_num.find('.'));
-        fraction = copy_num.substr(integer.size()+1,copy_num.size()-1);
+        integer = copy_num.substr(l, copy_num.find('.'));
+        fraction = copy_num.substr(integer.size() + 1, copy_num.size() - 1);
     }
-    if(integer==""){
-        integer="0";
+    if (integer == "") {
+        integer = "0";
     }
-    if(fraction==""){
-        fraction="0";
+    if (fraction == "") {
+        fraction = "0";
     }
-    if(integer!="0"){
-        while(integer[zero]=='0'){
+    if (integer != "0") {
+        while (integer[zero] == '0') {
             zero++;
         }
         integer = integer.substr(zero, integer.size());
     }
-BigReal :: BigReal (const BigReal& other){
-    this->fraction = other.fraction;
-    this->sign = other.sign;
-    this->integer = other.integer;
 }
 //-------------------------------------
 bool BigReal:: operator > (BigReal& o){
@@ -717,7 +698,7 @@ int BigReal :: size() {
 
 int BigReal :: the_sign() {
     return (sign == '+') ? 1 : 0;
-
+}
 //-------------------------------------------
 ostream &operator << (ostream &out, const BigReal &big_real){
     out << big_real.sign<<big_real.integer <<'.'<<big_real.fraction;

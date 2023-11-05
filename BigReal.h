@@ -1,6 +1,3 @@
-//
-// Created by COMPU LAND on 11/2/2023.
-//
 
 #ifndef OOP_ASSIGNMENT2_BIGREAL_H
 #define OOP_ASSIGNMENT2_BIGREAL_H
@@ -23,7 +20,6 @@ public:
     bool operator < (BigReal& W);
     bool operator == (BigReal& N);
     friend ostream &operator << (ostream &out, const BigReal &big_real);
-    BigReal operator >> (BigReal c);
     BigReal& operator = (const BigReal& a);
     int size();
     int the_sign();
