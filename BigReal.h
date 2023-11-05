@@ -25,6 +25,8 @@ public:
     friend ostream &operator << (ostream &out, const BigReal &big_real);
     BigReal operator >> (BigReal c);
     BigReal& operator = (const BigReal& a);
+    int size();
+    int the_sign();
 
 };
 
