@@ -611,6 +611,12 @@ BigReal :: BigReal (string k) {
     if(fraction==""){
         fraction="0";
     }
+    if(integer!="0"){
+        while(integer[zero]=='0'){
+            zero++;
+        }
+        integer = integer.substr(zero, integer.size());
+    }
 }
 //-------------------------------------
 bool BigReal:: operator > (BigReal& o){
