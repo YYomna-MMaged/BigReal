@@ -27,6 +27,7 @@ public:
     BigReal& operator = (const BigReal& a);
     int size();
     int the_sign();
+    BigReal (double num);
 
 };
 
