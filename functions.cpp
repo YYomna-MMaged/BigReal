@@ -618,6 +618,40 @@ BigReal :: BigReal (string k) {
         integer = integer.substr(zero, integer.size());
     }
 }
+/----------------------------------
+BigReal :: BigReal (double num) {
+    string copy_num = to_string(num);
+}
+    int l=0;
+    if(regex_match(copy_num,regex("[+-]?\\d*.?\\d+"))){
+        if(copy_num[0]=='+'){
+            sign='+';
+            l=1;
+        }
+        else if(copy_num[0]=='-') {
+            sign='-';
+            l=1;
+        }
+        integer = copy_num.substr(l,copy_num.find('.'));
+        fraction = copy_num.substr(integer.size()+1,copy_num.size()-1);
+    }
+    if(integer==""){
+        integer="0";
+    }
+    if(fraction==""){
+        fraction="0";
+    }
+    if(integer!="0"){
+        while(integer[zero]=='0'){
+            zero++;
+        }
+        integer = integer.substr(zero, integer.size());
+    }
+BigReal :: BigReal (const BigReal& other){
+    this->fraction = other.fraction;
+    this->sign = other.sign;
+    this->integer = other.integer;
+}
 //-------------------------------------
 bool BigReal:: operator > (BigReal& o){
     if ( sign == '+' && o.sign == '-'){
