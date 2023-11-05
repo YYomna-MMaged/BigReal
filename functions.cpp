@@ -675,6 +675,15 @@ bool BigReal:: operator == (BigReal& N){
     return false;
 
 }
+//____(sign & size methods)_________
+
+int BigReal :: size() {
+    return (this->integer.size() + this->fraction.size() + 2);
+}
+
+int BigReal :: the_sign() {
+    return (sign == '+') ? 1 : 0;
+
 //-------------------------------------------
 ostream &operator << (ostream &out, const BigReal &big_real){
     out << big_real.sign<<big_real.integer <<'.'<<big_real.fraction;
