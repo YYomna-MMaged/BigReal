@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
-project(OOP_Assignment2)
+project(A2_Task2_S19_20221196-20221062-20221041)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(OOP_Assignment2 functions.cpp main.cpp BigReal.h)
+add_executable(A2_Task2_S19_20221196-20221062-20221041 functions.cpp A2_Task2_S19_20221196-20221062-20221041.cpp BigReal.h)

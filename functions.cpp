@@ -1,5 +1,93 @@
 #include "BigReal.h"
 #include <bits/stdc++.h>
+//______________________________*Set operators*_______________________________
+//______________(Default constructor)_____________________________
+BigReal ::BigReal() {
+    integer = "0";
+    fraction = "0";
+    sign = '+';
+}
+//_____________(Assignment operator)________________
+BigReal& BigReal :: operator = (const BigReal& a) { // Assignment the valuse of the object in another object
+
+    sign = a.sign;
+    integer = a.integer;
+    fraction = a.fraction;
+    return *this; // Return a reference to the modified object
+}
+//_________________(copy constructor)________________
+BigReal :: BigReal (const BigReal& other){ // Copy the valuse of the object in another object
+    this->fraction = other.fraction;
+    this->sign = other.sign;
+    this->integer = other.integer;
+}
+//--------------------------------------------------
+BigReal :: BigReal (string k) {
+    int l = 0 , zero = 0;
+    if(regex_match(k,regex("[+-]?\\d*.?\\d+"))){ //Use rexeg_mach to Mach what is pattern I need .
+        if(k[0]=='+'){
+            sign='+';
+            l=1;
+        }
+        else if(k[0]=='-') {
+            sign='-';
+            l=1;
+        }
+        else {
+            sign = '+';
+        }
+        integer=k.substr(l,k.find('.') - l);
+        fraction=k.substr(integer.size()+1+l,k.size()-1);
+    }
+    //If it not valid make it =0,0
+    if(integer==""){
+        integer="0";
+    }
+    if(fraction==""){
+        fraction="0";
+    }
+    if(integer!="0"){
+        while(integer[zero]=='0'){
+            zero++;
+        }
+        integer = integer.substr(zero, integer.size());
+    }
+}
+//-------------------------------------------
+BigReal :: BigReal (double num) {
+    string copy_num = to_string(num);
+
+    int l = 0, zero = 0;
+    if (regex_match(copy_num, regex("[+-]?\\d*.?\\d+"))) { //Use rexeg_mach to Mach what is pattern I need .
+        if (copy_num[0] == '+') {
+            sign = '+';
+            l = 1;
+        } else if (copy_num[0] == '-') {
+            sign = '-';
+            l = 1;
+        }
+        else {
+            sign = '+';
+        }
+        integer = copy_num.substr(l, copy_num.find('.') - l);
+        fraction = copy_num.substr(integer.size() + 1 + l, copy_num.size() - 1);
+    }
+
+    //If it not valid make it =0,0
+    if (integer == "") {
+        integer = "0";
+    }
+    if (fraction == "") {
+        fraction = "0";
+    }
+    if (integer != "0") {
+        while (integer[zero] == '0') {
+            zero++;
+        }
+        integer = integer.substr(zero, integer.size());
+    }
+}
+
 
 //_____________(+ operator)________________
 BigReal BigReal :: operator+(BigReal &l) {
@@ -40,7 +128,7 @@ BigReal BigReal :: operator+(BigReal &l) {
         //Integer________________________________________________
         //Make them the same length
         while (this->integer.size() < l.integer.size()){
-            integer = '0' + l.integer;
+            integer = '0' + integer;
         }
 
         while (l.integer.size() < this->integer.size()){
@@ -62,11 +150,31 @@ BigReal BigReal :: operator+(BigReal &l) {
             res.integer.push_back(char('0' + carry));
         }
         reverse(res.integer.begin(), res.integer.end());
+        while (res.integer[res.integer.size()-1] == '0')
+        {
+            res.integer.pop_back();
+        }
+
+        reverse(integer.begin(), integer.end());
+        reverse(l.integer.begin(), l.integer.end());
+        while (integer[integer.size()-1] == '0')
+        {
+            integer.pop_back();
+        }
+        while (l.integer[l.integer.size()-1] == '0')
+        {
+            l.integer.pop_back();
+        }
+        reverse(integer.begin(), integer.end());
+        reverse(l.integer.begin(), l.integer.end());
+        return res;
+
     }
     else if(sign != l.sign){ // if their signs are not equal
         BigReal res = subtraction(*this , l);
+        return res;
     }
-    return res;
+
 
 }
 //_______________(subtraction)_________________________
@@ -122,7 +230,6 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
     while (f.integer.size() > s.integer.size()){
         s.integer = '0' + s.integer;
     }
-
 
     if (f_is_bigger) { //If the largest in the first number
 
@@ -199,6 +306,10 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
             sub_res.integer.push_back(char('0' + x));
         }
         reverse(sub_res.integer.begin(), sub_res.integer.end());
+        while (sub_res.integer[sub_res.integer.size()-1] == '0')
+        {
+            sub_res.integer.pop_back();
+        }
     }
 
     else if(!f_is_bigger) { //If the largest isn't the first number
@@ -273,8 +384,35 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
             sub_res.integer.push_back(char('0' + x));
         }
         reverse(sub_res.integer.begin(), sub_res.integer.end());
+        while (sub_res.integer[sub_res.integer.size()-1] == '0')
+        {
+            sub_res.integer.pop_back();
+        }
     }
+    reverse(f.integer.begin(), f.integer.end());
+    reverse(s.integer.begin(), s.integer.end());
+    reverse(f.fraction.begin(), f.fraction.end());
+    reverse(s.fraction.begin(), s.fraction.end());
 
+    while (f.integer[f.integer.size()-1] == '0')
+    {
+        f.integer.pop_back();
+    }
+    while (s.integer[s.integer.size()-1] == '0')
+    {
+        s.integer.pop_back();
+    }
+    while (f.fraction[f.fraction.size()-1] == '0')
+    {
+        f.fraction.pop_back();
+    }while (s.fraction[s.fraction.size()-1] == '0')
+    {
+        s.fraction.pop_back();
+    }
+    reverse(f.integer.begin(), f.integer.end());
+    reverse(s.integer.begin(), s.integer.end());
+    reverse(f.fraction.begin(), f.fraction.end());
+    reverse(s.fraction.begin(), s.fraction.end());
     return sub_res;
 }
 //_____________(- operator)________________
@@ -395,9 +533,11 @@ BigReal BigReal :: operator - (BigReal &k) {
 
                 res.integer.push_back(char('0' + x));
             }
-
             reverse(res.integer.begin(), res.integer.end());
-
+            while (res.integer[res.integer.size()-1] == '0')
+            {
+                res.integer.pop_back();
+            }
         }
 
         if(!is_big){ //If the largest isn't the first number
@@ -475,14 +615,47 @@ BigReal BigReal :: operator - (BigReal &k) {
                 res.integer.push_back(char('0' + x));
             }
             reverse(res.integer.begin(), res.integer.end());
+            while (res.integer[res.integer.size()-1] == '0')
+            {
+                res.integer.pop_back();
+            }
         }
+
+        reverse(integer.begin(), integer.end());
+        reverse(k.integer.begin(), k.integer.end());
+        reverse(fraction.begin(), fraction.end());
+        reverse(k.fraction.begin(), k.fraction.end());
+
+        while (integer[integer.size()-1] == '0')
+        {
+            integer.pop_back();
+        }
+        while (k.integer[k.integer.size()-1] == '0')
+        {
+            k.integer.pop_back();
+        }
+        while (fraction[fraction.size()-1] == '0')
+        {
+            fraction.pop_back();
+        }
+        while (k.fraction[k.fraction.size()-1] == '0')
+        {
+            k.fraction.pop_back();
+        }
+
+        reverse(integer.begin(), integer.end());
+        reverse(k.integer.begin(), k.integer.end());
+        reverse(fraction.begin(), fraction.end());
+        reverse(k.fraction.begin(), k.fraction.end());
+        return res;
     }
 
     else if (sign != k.sign) { //If they haven't the same sign and different values
         res = addition(*this , k , is_big); // Call the addition function
+        return res;
     }
 
-    return res;
+
 }
 
 //_________________(addition)_________________________
@@ -490,7 +663,8 @@ BigReal BigReal :: addition(BigReal &f, BigReal s , bool big) {
     BigReal res_add;
 
     res_add.sign = f.sign; //sige take the sign of the first number
-//__________ the add fractions and integers similar to the (+) operator-----------------------
+
+//__________add fractions and integers similar to the (+) operator____________________
     int carry = 0;
     // fraction_________________________________________
     if(f.fraction.size() < s.fraction.size())
@@ -551,103 +725,42 @@ BigReal BigReal :: addition(BigReal &f, BigReal s , bool big) {
         res_add.integer.push_back(char('0' + carry));
     }
     reverse(res_add.integer.begin(), res_add.integer.end());
-
+    while (res_add.integer[res_add.integer.size()-1] == '0')
+    {
+        res_add.integer.pop_back();
+    }
+    reverse(f.integer.begin(), f.integer.end());
+    reverse(s.integer.begin(), s.integer.end());
+    while (f.integer[f.integer.size()-1] == '0')
+    {
+        f.integer.pop_back();
+    }
+    while (s.integer[s.integer.size()-1] == '0')
+    {
+        s.integer.pop_back();
+    }
+    reverse(f.integer.begin(), f.integer.end());
+    reverse(s.integer.begin(), s.integer.end());
     return res_add;
 }
 
-//_____________(Assignment operator)________________
-BigReal& BigReal :: operator = (const BigReal& a) { // Assignment the valuse of the object in another object
-
-    sign = a.sign;
-    integer = a.integer;
-    fraction = a.fraction;
-    return *this; // Return a reference to the modified object
-}
-//_________________(copy constructor)________________
-BigReal :: BigReal (const BigReal& other){ // Copy the valuse of the object in another object
-    this->fraction = other.fraction;
-    this->sign = other.sign;
-    this->integer = other.integer;
-}
-//----------------------------------
-BigReal :: BigReal (string k) {
-    int l = 0 , zero = 0;
-    if(regex_match(k,regex("[+-]?\\d*.?\\d+"))){ //Assignment the valuse of the object in another object
-        if(k[0]=='+'){
-            sign='+';
-            l=1;
-        }
-        else if(k[0]=='-') {
-            sign='-';
-            l=1;
-        }
-        else {
-            sign = '+';
-        }
-        integer=k.substr(l,k.find('.'));
-        fraction=k.substr(integer.size()+1,k.size()-1);
-    }
-    //If it not valid make it =0,0
-    if(integer==""){
-        integer="0";
-    }
-    if(fraction==""){
-        fraction="0";
-    }
-    if(integer!="0"){
-        while(integer[zero]=='0'){
-            zero++;
-        }
-        integer = integer.substr(zero, integer.size());
-    }
-}
-//----------------------------------
-BigReal :: BigReal (double num) {
-    string copy_num = to_string(num);
-
-    int l = 0, zero = 0;
-    if (regex_match(copy_num, regex("[+-]?\\d*.?\\d+"))) {
-        if (copy_num[0] == '+') {
-            sign = '+';
-            l = 1;
-        } else if (copy_num[0] == '-') {
-            sign = '-';
-            l = 1;
-        }
-        else {
-            sign = '+';
-        }
-        integer = copy_num.substr(l, copy_num.find('.'));
-        fraction = copy_num.substr(integer.size() + 1, copy_num.size() - 1);
-    }
-    if (integer == "") {
-        integer = "0";
-    }
-    if (fraction == "") {
-        fraction = "0";
-    }
-    if (integer != "0") {
-        while (integer[zero] == '0') {
-            zero++;
-        }
-        integer = integer.substr(zero, integer.size());
-    }
-}
-//-------------------------------------
+//_______________________________(Comparison operators)______________________________
+//(>) operator-------------------------------------
 bool BigReal:: operator > (BigReal& o){
-    if ( sign == '+' && o.sign == '-'){
+    if ( sign == '+' && o.sign == '-'){ //If the sign of number + and the other is – then return true.
         return true;
     }
+    //If the two signs are same and the size of integer part for number is greater/smaller then other and sign is + then return true.
     if (((sign == '-' && o.sign=='-')&& integer.size()<o.integer.size())||((sign=='+'&& o.sign=='+')&& integer.size()>o.integer.size())){
         return true;
     }
 
-    else if (integer.size()==o.integer.size()){
-        if((integer> o.integer && o.sign=='+' )||(integer< o.integer && o.sign=='-')){
+    else if (integer.size()==o.integer.size()){ //If the size of Integer part is equal
+        if((integer> o.integer && o.sign=='+' )||(integer< o.integer && o.sign=='-')){ // compare the two integer and if integer is bigger and sign is positive or integer is small and sign is negative return true.
             return true;
         }
 
-        if(integer==o.integer) {
+        if(integer==o.integer) { //If two integer part are equal compare fraction as integer.
             if((fraction > o.fraction && sign=='+' )||(fraction< o.fraction && o.sign=='-')){
                 return true;
             }
@@ -655,36 +768,37 @@ bool BigReal:: operator > (BigReal& o){
 
     }
 
-    return false;
+    return false; //If not all those true return false.
 }
-//------------------------------------------
+//(<) operator------------------------------------------
 bool BigReal :: operator < (BigReal& W){
-    if ( sign == '-' && W.sign == '+'){
+    if ( sign == '-' && W.sign == '+'){ //If the sign of number - and the other is + then return true.
         return true;
     }
+    //If the two signs are same and the size of integer part for number is smaller/greater then other and sign is + then return true .
     if (((sign =='-' && W.sign=='-')&& integer.size()>W.integer.size())||((sign=='+'&& W.sign=='+')&& integer.size()<W.integer.size())){
         return true;
     }
 
-    else if (integer.size()==W.integer.size()){
-        if((integer < W.integer && W.sign=='+' )||(integer > W.integer && W.sign=='-')){
+    else if (integer.size()==W.integer.size()){ //If the size of Integer part is equal
+        if((integer < W.integer && W.sign=='+' )||(integer > W.integer && W.sign=='-')){ //compare the two integer and if integer is bigger and sign is negative or integer is small and sign is positive return true.
             return true;
         }
 
-        if(integer==W.integer) {
+        if(integer==W.integer) { //If two integer part are equal compare fraction as integer.
             if((fraction < W.fraction && sign =='+' )||(fraction > W.fraction && W.sign=='-')){
                 return true;
             }
         }
 
     }
-    return false;
+    return false; //If not all those true return false.
 
 }
 
-//--------------------------------------------
+//(==) operator--------------------------------------------
 bool BigReal:: operator == (BigReal& N){
-    if(sign == N.sign && integer == N.integer && fraction == N.fraction){
+    if(sign == N.sign && integer == N.integer && fraction == N.fraction){ // check if two numbers are equal
         return true ;
     }
     return false;
@@ -692,15 +806,16 @@ bool BigReal:: operator == (BigReal& N){
 }
 //____(sign & size methods)_________
 
-int BigReal :: size() {
+int BigReal :: size() { //total size
     return (this->integer.size() + this->fraction.size() + 2);
 }
 
-int BigReal :: the_sign() {
+int BigReal :: the_sign() { //value of the sign
     return (sign == '+') ? 1 : 0;
 }
-//-------------------------------------------
-ostream &operator << (ostream &out, const BigReal &big_real){
+// Cout-------------------------------------------
+ostream &operator << (ostream &out, const BigReal &big_real){ // Display values
     out << big_real.sign<<big_real.integer <<'.'<<big_real.fraction;
     return out;
 }
+
