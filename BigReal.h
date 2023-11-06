@@ -13,17 +13,21 @@ class BigReal {
 public:
     BigReal();
     BigReal (string k);
+    BigReal (double num);
+    BigReal& operator = (const BigReal& a);
     BigReal (const BigReal& other);
+
     BigReal operator + (BigReal& l );
     BigReal operator - (BigReal& k) ;
+
     bool operator > (BigReal& o);
     bool operator < (BigReal& W);
     bool operator == (BigReal& N);
+
     friend ostream &operator << (ostream &out, const BigReal &big_real);
-    BigReal& operator = (const BigReal& a);
+
     int size();
     int the_sign();
-    BigReal (double num);
 
 };
 

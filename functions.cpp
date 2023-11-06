@@ -318,7 +318,7 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
         // fraction_________________________________________
         for (int i = f.fraction.size() - 1; i >= 0; --i) { // subtract fraction part and take care about borrow
             int x;
-            if (f.fraction[i] < s.fraction[i]) {
+            if (s.fraction[i] <  f.fraction[i]) {
                 if (borrow) {
                     x = ((s.fraction[i] - '0') + 9) - (f.fraction[i] - '0');
                 }
@@ -355,7 +355,7 @@ BigReal BigReal::subtraction(BigReal &f, BigReal s) {
 
         for (int i = f.integer.size() - 1; i >= 0; --i) { // subtract integer part and take care about borrow
             int x;
-            if (f.integer[i] < s.integer[i]) {
+            if (s.integer[i] < f.integer[i]) {
                 if (borrow) {
                     x = ((s.integer[i] - '0') + 9) - (f.integer[i] - '0');
                 }
